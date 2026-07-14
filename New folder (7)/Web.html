@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebRATs | Kira & XLoader</title>
+    <style>
+        /* ---------- إعادة تعيين وإعدادات ---------- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background: #080b17;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(1.5px 1.5px at 10% 20%, rgba(255,255,255,0.3), transparent),
+                radial-gradient(1.5px 1.5px at 30% 70%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.25), transparent),
+                radial-gradient(1px 1px at 70% 40%, rgba(255,255,255,0.15), transparent),
+                radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.2), transparent),
+                radial-gradient(1.5px 1.5px at 15% 90%, rgba(255,255,255,0.1), transparent),
+                radial-gradient(1px 1px at 60% 60%, rgba(255,255,255,0.15), transparent),
+                radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,0.1), transparent);
+            background-size: 300px 300px;
+            opacity: 0.5;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1320px;
+            background: rgba(12, 16, 30, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 32px 36px 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        /* ---------- الرأس ---------- */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .site-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #eceef5;
+        }
+
+        .site-title .highlight {
+            background: linear-gradient(135deg, #f5b56b, #e0943a);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .site-title .highlight-blue {
+            background: linear-gradient(135deg, #7bb3f5, #3d7ec9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+        }
+
+        .lang-switch {
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 5px 8px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .lang-btn {
+            background: transparent;
+            border: none;
+            color: #8a94b0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 5px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .lang-btn:hover {
+            color: #d0d5e6;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, #f5b56b, #e0943a);
+            color: #0b0e1a;
+            box-shadow: 0 4px 16px rgba(245, 181, 107, 0.25);
+        }
+
+        /* ---------- تخطيط العمودين ---------- */
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 6px;
+        }
+
+        /* ---------- البطاقات ---------- */
+        .card {
+            background: rgba(18, 24, 46, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 28px;
+            padding: 26px 24px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.4s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 48px -12px rgba(0, 0, 0, 0.8);
+            border-color: rgba(255, 215, 0, 0.08);
+        }
+
+        .card-kira {
+            border-right: 3px solid #f5b56b;
+        }
+
+        .card-xloader {
+            border-left: 3px solid #6ba6f5;
+        }
+
+        .card-title {
+            font-size: 1.9rem;
+            font-weight: 700;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .card-kira .card-title {
+            color: #f5c78a;
+        }
+
+        .card-xloader .card-title {
+            color: #8ab8f5;
+        }
+
+        .card-title .badge-icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        /* ---------- قائمة المميزات ---------- */
+        .feature-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .feature-list li {
+            padding: 7px 14px 7px 18px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: #c8cee2;
+            border-right: 2px solid rgba(245, 181, 107, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: background 0.2s, padding-right 0.2s;
+        }
+
+        .feature-list li::before {
+            content: '◆';
+            color: #f5b56b;
+            font-size: 0.65rem;
+            opacity: 0.7;
+        }
+
+        .feature-list li:hover {
+            background: rgba(255, 215, 0, 0.04);
+            padding-right: 22px;
+        }
+
+        .card-xloader .feature-list li {
+            border-right: 2px solid rgba(107, 166, 245, 0.25);
+        }
+
+        .card-xloader .feature-list li::before {
+            color: #6ba6f5;
+        }
+
+        /* ---------- صور الرات (أسفل المميزات) ---------- */
+        .rat-images {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin-top: auto;
+            padding-top: 16px;
+        }
+
+        .rat-images img {
+            width: 100%;
+            max-width: 280px;
+            height: auto;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            transition: transform 0.3s, box-shadow 0.3s;
+            background: #1a1f33;
+            cursor: pointer;
+        }
+
+        .rat-images img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.6);
+        }
+
+        /* ---------- Modal لتكبير الصور ---------- */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.9);
+            border: 2px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            color: #fff;
+            font-size: 2.5rem;
+            font-weight: 300;
+            cursor: pointer;
+            transition: 0.3s;
+            background: rgba(255,255,255,0.05);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-close:hover {
+            background: rgba(255,255,255,0.15);
+            transform: rotate(90deg);
+        }
+
+        /* ---------- نافذة التحذير المنبثقة ---------- */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .popup {
+            background: rgba(18, 24, 46, 0.95);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 32px;
+            max-width: 680px;
+            width: 100%;
+            padding: 40px 32px 32px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+            position: relative;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .popup-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: #8a94b0;
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: 0.3s;
+            padding: 4px 12px;
+            border-radius: 8px;
+            line-height: 1;
+        }
+
+        .popup-close:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .popup-content {
+            color: #d0d5e6;
+            font-size: 1rem;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .popup-content p {
+            margin-bottom: 16px;
+        }
+
+        .popup-content a {
+            color: #f5b56b;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dotted rgba(245, 181, 107, 0.3);
+            transition: 0.3s;
+        }
+
+        .popup-content a:hover {
+            color: #ffd78a;
+            border-bottom-color: #f5b56b;
+        }
+
+        .popup-content .highlight-box {
+            background: rgba(245, 181, 107, 0.08);
+            border-right: 3px solid #f5b56b;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin: 16px 0;
+            text-align: right;
+        }
+
+        .popup-lang-btns {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .popup-lang-btns button {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: #8a94b0;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .popup-lang-btns button:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+
+        .popup-lang-btns button.active {
+            background: linear-gradient(135deg, #f5b56b, #e0943a);
+            color: #0b0e1a;
+            border-color: transparent;
+        }
+
+        /* ---------- رابط المجتمع ---------- */
+        .community-section {
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: center;
+        }
+
+        .community-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 10px 28px;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #b0b9d6;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background 0.3s, border-color 0.3s, transform 0.2s;
+            backdrop-filter: blur(4px);
+        }
+
+        .community-link:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(245, 181, 107, 0.2);
+            transform: translateY(-2px);
+            color: #e8ecf5;
+        }
+
+        .community-link .telegram-icon {
+            width: 24px;
+            height: 24px;
+            background: #28a8ea;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #fff;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .community-link .link-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            line-height: 1.3;
+        }
+
+        .community-link .link-text .small {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            font-weight: 400;
+        }
+
+        /* ---------- تذييل ---------- */
+        .footer {
+            margin-top: 28px;
+            text-align: center;
+            color: #5a6280;
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 18px;
+            letter-spacing: 0.3px;
+        }
+
+        .footer .love {
+            color: #f5b56b;
+        }
+
+        /* ---------- استجابة ---------- */
+        @media (max-width: 900px) {
+            .row {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+            .container {
+                padding: 22px 18px 28px;
+            }
+            .site-title {
+                font-size: 1.8rem;
+            }
+            .card-title {
+                font-size: 1.6rem;
+            }
+            .card-xloader {
+                border-left: none;
+                border-right: 3px solid #6ba6f5;
+            }
+            .card-kira {
+                border-right: 3px solid #f5b56b;
+            }
+            .rat-images img {
+                max-width: 220px;
+            }
+            .popup {
+                padding: 30px 20px 24px;
+            }
+        }
+
+        @media (max-width: 550px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 10px;
+            }
+            .lang-switch {
+                align-self: flex-start;
+            }
+            .site-title {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+            .card {
+                padding: 18px 16px 22px;
+            }
+            .feature-list li {
+                font-size: 0.85rem;
+                padding: 6px 12px;
+            }
+            .community-link {
+                padding: 8px 18px;
+                font-size: 0.8rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .community-link .link-text {
+                align-items: center;
+            }
+            .rat-images img {
+                max-width: 180px;
+            }
+            .modal-close {
+                top: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                font-size: 2rem;
+            }
+            .popup {
+                padding: 24px 16px 20px;
+            }
+            .popup-content {
+                font-size: 0.9rem;
+            }
+        }
+
+        /* توجيه النص حسب اللغة */
+        body[dir="ltr"] .container {
+            direction: ltr;
+        }
+        body[dir="rtl"] .container {
+            direction: rtl;
+        }
+        body[dir="ltr"] .feature-list li {
+            border-right: none;
+            border-left: 2px solid rgba(245, 181, 107, 0.3);
+            padding: 7px 18px 7px 14px;
+        }
+        body[dir="ltr"] .feature-list li::before {
+            content: '◆';
+        }
+        body[dir="ltr"] .card-xloader .feature-list li {
+            border-left: 2px solid rgba(107, 166, 245, 0.25);
+            border-right: none;
+        }
+        body[dir="ltr"] .card-kira {
+            border-right: none;
+            border-left: 3px solid #f5b56b;
+        }
+        body[dir="ltr"] .card-xloader {
+            border-left: none;
+            border-right: 3px solid #6ba6f5;
+        }
+        body[dir="ltr"] .popup-content .highlight-box {
+            border-right: none;
+            border-left: 3px solid #f5b56b;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- نافذة التحذير المنبثقة -->
+    <div class="overlay" id="warningOverlay">
+        <div class="popup">
+            <button class="popup-close" id="popupCloseBtn" title="إغلاق">✕</button>
+            <div class="popup-lang-btns">
+                <button class="active" data-popup-lang="ar">عربي</button>
+                <button data-popup-lang="en">English</button>
+                <button data-popup-lang="ru">Русский</button>
+            </div>
+            <div class="popup-content" id="popupContent">
+                <!-- يتم تعبئتها بواسطة JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal لتكبير الصور -->
+    <div class="modal" id="imageModal" onclick="closeModal()">
+        <span class="modal-close" onclick="event.stopPropagation(); closeModal();">✕</span>
+        <img id="modalImage" src="" alt="مكبر">
+    </div>
+
+    <div class="container" id="appContainer">
+
+        <!-- الرأس -->
+        <header class="header">
+            <div class="site-title" id="siteTitle">
+                WebRATs <span class="highlight">Kira</span> &amp; <span class="highlight-blue">XLoader</span>
+            </div>
+            <div class="lang-switch">
+                <button class="lang-btn active" data-lang="ar" id="langAr">عربي</button>
+                <button class="lang-btn" data-lang="en" id="langEn">English</button>
+                <button class="lang-btn" data-lang="ru" id="langRu">Русский</button>
+            </div>
+        </header>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="row">
+
+            <!-- بطاقة كيرا -->
+            <div class="card card-kira" id="cardKira">
+                <div class="card-title">
+                    <span class="badge-icon">⚡</span>
+                    <span id="kiraTitle">Kira</span>
+                </div>
+                <ul class="feature-list" id="kiraFeatures">
+                    <!-- يتم تعبئتها بواسطة JavaScript -->
+                </ul>
+                <div class="rat-images">
+                    <img src="K.png" alt="Kira Image 1" loading="lazy" onclick="openModal(this.src)">
+                    <img src="R.png" alt="Kira Image 2" loading="lazy" onclick="openModal(this.src)">
+                </div>
+            </div>
+
+            <!-- بطاقة إكس لودر -->
+            <div class="card card-xloader" id="cardXloader">
+                <div class="card-title">
+                    <span class="badge-icon">⌛</span>
+                    <span id="xloaderTitle">XLoader</span>
+                </div>
+                <ul class="feature-list" id="xloaderFeatures">
+                    <!-- يتم تعبئتها بواسطة JavaScript -->
+                </ul>
+                <div class="rat-images">
+                    <img src="L.png" alt="XLoader Image 1" loading="lazy" onclick="openModal(this.src)">
+                    <img src="X.png" alt="XLoader Image 2" loading="lazy" onclick="openModal(this.src)">
+                </div>
+            </div>
+        </div>
+
+        <!-- رابط المجتمع -->
+        <div class="community-section">
+            <a href="https://t.me/+NSdSHnX9vS5mMzhk" target="_blank" class="community-link" id="communityLink">
+                <span class="telegram-icon">✈</span>
+                <span class="link-text">
+                    <span id="communityTitle">مجتمع التطوير</span>
+                    <span class="small" id="communitySub">للتحديثات والنقاشات وطلب المميزات</span>
+                </span>
+            </a>
+        </div>
+
+        <!-- تذييل -->
+        <div class="footer">
+            <span id="footerText">© 2026 WebRATs — <span class="love">♥</span> </span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ---------- بيانات الترجمة للموقع ----------
+            const translations = {
+                ar: {
+                    kiraTitle: '⚡ Kira',
+                    xloaderTitle: '⌛ XLoader',
+                    kiraFeatures: [
+                        'التحكم عن بُعد (Remote Desktop)',
+                        'تعطيل جدار الحماية Windows Defender',
+                        'قفل الشاشة (Winlocker)',
+                        'اختطاف جلسة تيليجرام',
+                        'تعطيل مؤشر الفأرة',
+                        'Shell (سطر أوامر)',
+                        'التقاط صورة من الكاميرا',
+                        'إشعارات منبثقة',
+                        'تغيير خلفية الدردشة',
+                        'إغراق الدردشة برسائل (سبام)',
+                        'فتح موقع إلكتروني',
+                        'سحب معلومات الضحية (الموقع الجغرافي)',
+                        'إرسال ملف',
+                        'تعدين العملات الرقمية',
+                        'هجوم حجب الخدمة (DDoS)',
+                        'ومميزات إضافية متعددة'
+                    ],
+                    xloaderFeatures: [
+                        'تصفح الملفات (File Browser)',
+                        'قتل العمليات (Kill Process)',
+                        'مدير العمليات (Process Manager)',
+                        'سحب توكن ديسكورد (Discord Token)',
+                        'كاميرا الويب (Webcam)',
+                        'عرض اتصالات TCP (TCP View)',
+                        'الموقع الجغرافي (Location)',
+                        'التحكم عن بُعد (Remote Desktop)',
+                        'تعطيل الماوس (Disable Mouse)',
+                        'عكس الماوس (Invert Mouse)',
+                        'معلومات النظام (System Info)',
+                        'الحقن (Injection)',
+                        'وميزات أخرى كثيرة'
+                    ],
+                    footer: '© 2026 WebRATs — ♥ ',
+                    community: 'مجتمع التطوير',
+                    communitySub: 'للتحديثات والنقاشات وطلب المميزات',
+                    popup: {
+                        title: 'تنبيه هام',
+                        text: 'جميع النسخ في هذا الموقع رسمية ومباشرة من المطورين. يرجى التحقق من رابط المجموعة الخاصة بنا لمعرفة المزيد ومشاركة تجربتك معنا. أي شيء خارج الموقع، نحن لا نتحمل أي أضرار منه، وأي شيء داخل الموقع نتحمل كل شيء. جميع النسخ نظيفة ومن المطورين مباشرة.',
+                        linkText: 'رابط المجموعة'
+                    }
+                },
+                en: {
+                    kiraTitle: '⚡ Kira',
+                    xloaderTitle: '⌛ XLoader',
+                    kiraFeatures: [
+                        'Remote Desktop',
+                        'Disable Windows Defender',
+                        'Screen Lock (Winlocker)',
+                        'Telegram Session Hijack',
+                        'Disable Mouse',
+                        'Shell Access',
+                        'Camera Capture',
+                        'Pop-up Notifications',
+                        'Change Chat Wallpaper',
+                        'Chat Spam',
+                        'Open Website',
+                        'Victim Info (Geo-location)',
+                        'Send File',
+                        'Cryptocurrency Miner',
+                        'DDoS Attack',
+                        'And many more'
+                    ],
+                    xloaderFeatures: [
+                        'File Browser',
+                        'Kill Process',
+                        'Process Manager',
+                        'Discord Token Grabber',
+                        'Webcam',
+                        'TCP View',
+                        'Location',
+                        'Remote Desktop',
+                        'Disable Mouse',
+                        'Invert Mouse',
+                        'System Info',
+                        'Injection',
+                        'And many more'
+                    ],
+                    footer: '© 2026 WebRATs — ♥ ',
+                    community: 'Development Community',
+                    communitySub: 'Updates, discussions & feature requests',
+                    popup: {
+                        title: 'Important Notice',
+                        text: 'All versions on this site are official and directly from the developers. Please check our group link to learn more and share your experience with us. We are not responsible for any damage from anything outside the site, and we take full responsibility for everything inside the site. All versions are clean and from the developers directly.',
+                        linkText: 'Group Link'
+                    }
+                },
+                ru: {
+                    kiraTitle: '⚡ Kira',
+                    xloaderTitle: '⌛ XLoader',
+                    kiraFeatures: [
+                        'Удалённый рабочий стол',
+                        'Отключение Windows Defender',
+                        'Блокировка экрана (Winlocker)',
+                        'Перехват сессии Telegram',
+                        'Отключение мыши',
+                        'Доступ к Shell',
+                        'Захват камеры',
+                        'Всплывающие уведомления',
+                        'Смена обоев чата',
+                        'Спам в чате',
+                        'Открыть сайт',
+                        'Информация о жертве (геолокация)',
+                        'Отправить файл',
+                        'Майнинг криптовалют',
+                        'DDoS-атака',
+                        'И многие другие'
+                    ],
+                    xloaderFeatures: [
+                        'Файловый менеджер',
+                        'Завершение процессов',
+                        'Диспетчер процессов',
+                        'Кража токена Discord',
+                        'Веб-камера',
+                        'TCP View',
+                        'Геолокация',
+                        'Удалённый рабочий стол',
+                        'Отключить мышь',
+                        'Инвертировать мышь',
+                        'Информация о системе',
+                        'Инъекция',
+                        'И многие другие'
+                    ],
+                    footer: '© 2026 WebRATs — ♥ ',
+                    community: 'Сообщество разработчиков',
+                    communitySub: 'Обновления, обсуждения и запросы',
+                    popup: {
+                        title: 'Важное уведомление',
+                        text: 'Все версии на этом сайте являются официальными и напрямую от разработчиков. Пожалуйста, проверьте ссылку на нашу группу, чтобы узнать больше и поделиться своим опытом с нами. Мы не несем ответственности за любой ущерб от чего-либо за пределами сайта, и мы берем на себя полную ответственность за все, что находится внутри сайта. Все версии чистые и от разработчиков напрямую.',
+                        linkText: 'Ссылка на группу'
+                    }
+                }
+            };
+
+            // العناصر الرئيسية
+            const kiraFeaturesList = document.getElementById('kiraFeatures');
+            const xloaderFeaturesList = document.getElementById('xloaderFeatures');
+            const kiraTitle = document.getElementById('kiraTitle');
+            const xloaderTitle = document.getElementById('xloaderTitle');
+            const footerText = document.getElementById('footerText');
+            const communityTitle = document.getElementById('communityTitle');
+            const communitySub = document.getElementById('communitySub');
+
+            const langBtns = document.querySelectorAll('.lang-switch .lang-btn');
+            const container = document.getElementById('appContainer');
+
+            // عناصر النافذة المنبثقة
+            const overlay = document.getElementById('warningOverlay');
+            const popupContent = document.getElementById('popupContent');
+            const popupCloseBtn = document.getElementById('popupCloseBtn');
+            const popupLangBtns = document.querySelectorAll('.popup-lang-btns button');
+
+            let currentLang = 'ar';
+            let popupLang = 'ar';
+
+            // دالة تحديث محتوى الموقع
+            function setLanguage(lang) {
+                currentLang = lang;
+                const data = translations[lang];
+                if (!data) return;
+
+                kiraTitle.textContent = data.kiraTitle;
+                xloaderTitle.textContent = data.xloaderTitle;
+                footerText.innerHTML = data.footer;
+                communityTitle.textContent = data.community;
+                communitySub.textContent = data.communitySub;
+
+                kiraFeaturesList.innerHTML = '';
+                data.kiraFeatures.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    kiraFeaturesList.appendChild(li);
+                });
+
+                xloaderFeaturesList.innerHTML = '';
+                data.xloaderFeatures.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.textContent = feature;
+                    xloaderFeaturesList.appendChild(li);
+                });
+
+                if (lang === 'ar') {
+                    document.body.dir = 'rtl';
+                    document.documentElement.lang = 'ar';
+                    container.style.direction = 'rtl';
+                } else {
+                    document.body.dir = 'ltr';
+                    document.documentElement.lang = lang;
+                    container.style.direction = 'ltr';
+                }
+
+                langBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.lang === lang) {
+                        btn.classList.add('active');
+                    }
+                });
+
+                // تحديث محتوى النافذة المنبثقة إذا كانت مفتوحة
+                updatePopupContent(popupLang);
+            }
+
+            // دالة تحديث محتوى النافذة المنبثقة
+            function updatePopupContent(lang) {
+                popupLang = lang;
+                const data = translations[lang];
+                if (!data) return;
+                const p = data.popup;
+                // إنشاء HTML للنافذة
+                popupContent.innerHTML = `
+                    <h3 style="color: #f5c78a; margin-bottom: 16px; font-size: 1.3rem;">${p.title}</h3>
+                    <p>${p.text}</p>
+                    <div class="highlight-box">
+                        <a href="https://t.me/+NSdSHnX9vS5mMzhk" target="_blank" style="color: #f5b56b; font-weight: 600; text-decoration: none; border-bottom: 1px dotted rgba(245,181,107,0.3);">${p.linkText} →</a>
+                    </div>
+                    <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 8px;">${lang === 'ar' ? '✕ اضغط على زر الإغلاق للمتابعة' : lang === 'en' ? '✕ Press the close button to continue' : '✕ Нажмите кнопку закрытия, чтобы продолжить'}</p>
+                `;
+                // تحديث أزرار اللغة في النافذة
+                popupLangBtns.forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.popupLang === lang) {
+                        btn.classList.add('active');
+                    }
+                });
+            }
+
+            // إظهار النافذة المنبثقة عند تحميل الصفحة
+            function showPopup() {
+                overlay.style.display = 'flex';
+                updatePopupContent(currentLang);
+            }
+
+            // إغلاق النافذة المنبثقة
+            function closePopup() {
+                overlay.style.display = 'none';
+            }
+
+            // مستمعات أزرار الموقع
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    if (lang && lang !== currentLang) {
+                        setLanguage(lang);
+                    }
+                });
+            });
+
+            // مستمعات أزرار النافذة المنبثقة
+            popupLangBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.popupLang;
+                    if (lang) {
+                        updatePopupContent(lang);
+                    }
+                });
+            });
+
+            // إغلاق النافذة بالزر X
+            popupCloseBtn.addEventListener('click', closePopup);
+
+            // إغلاق النافذة بالضغط على الخلفية
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closePopup();
+                }
+            });
+
+            // إغلاق النافذة بزر ESC
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && overlay.style.display === 'flex') {
+                    closePopup();
+                }
+            });
+
+            // تعيين اللغة الافتراضية (عربي)
+            setLanguage('ar');
+
+            // عرض النافذة المنبثقة بعد تحميل الصفحة مباشرة
+            window.addEventListener('load', function() {
+                // تأخير بسيط لضمان ظهورها بشكل سلس
+                setTimeout(showPopup, 300);
+            });
+
+            // ---------- تكبير الصور (Modal) ----------
+            function openModal(src) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImage');
+                modal.style.display = 'flex';
+                modalImg.src = src;
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeModal() {
+                document.getElementById('imageModal').style.display = 'none';
+                document.body.style.overflow = '';
+            }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+            });
+
+            window.openModal = openModal;
+            window.closeModal = closeModal;
+
+        })();
+    </script>
+
+</body>
+</html>
